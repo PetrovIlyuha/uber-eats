@@ -1,3 +1,4 @@
+import { UserService } from 'src/users/users.service';
 import * as Joi from 'joi';
 import {
   MiddlewareConsumer,
@@ -13,6 +14,8 @@ import { User } from './users/entities/user.entity';
 import { JwtAuthModule } from './jwt-auth/jwt-auth.module';
 import { JwtMiddleware } from './jwt-auth/jwt-auth.middleware';
 import { AuthModule } from './auth/auth.module';
+import { EmailVerificationEntity } from './users/entities/email-verify.entity';
+import { MailerModule } from './mailer/mailer.module';
 
 @Module({
   imports: [
@@ -28,6 +31,8 @@ import { AuthModule } from './auth/auth.module';
         DB_PASSWORD: Joi.string().required(),
         DB_DATABASE: Joi.string().required(),
         SECRET_KEY_TOKEN: Joi.string().required(),
+
+        SENDGRID_API_KEY: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRoot({
@@ -39,7 +44,7 @@ import { AuthModule } from './auth/auth.module';
       database: process.env.DB_DATABASE,
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: process.env.NODE_ENV !== 'prod',
-      entities: [User],
+      entities: [User, EmailVerificationEntity],
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
@@ -48,6 +53,9 @@ import { AuthModule } from './auth/auth.module';
     UsersModule,
     JwtAuthModule.forRoot({ privateKey: process.env.SECRET_KEY_TOKEN }),
     AuthModule,
+    MailerModule.forRoot({
+      sendGridApiKey: process.env.SENDGRID_API_KEY,
+    }),
   ],
   controllers: [],
   providers: [],
