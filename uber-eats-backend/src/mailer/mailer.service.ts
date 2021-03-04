@@ -21,7 +21,7 @@ export class MailerService {
     // });
   }
 
-  private sendEmail(
+  sendEmail(
     template: (emailVariables: EmailTemplateVariables) => string,
     emailVariables: EmailTemplateVariables,
   ) {
@@ -35,10 +35,12 @@ export class MailerService {
     sendGridMailer
       .send(emailData)
       .then((sent) => {
-        console.log('Activate account email was sent!', sent);
+        console.log('Account activation email was sent!', sent);
+        return { message: 'Account activation email was sent!', sent };
       })
       .catch((err) => {
         console.log('email sending error: ', err);
+        return { message: 'Email could not be sent' };
       });
   }
 
