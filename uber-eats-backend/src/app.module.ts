@@ -56,7 +56,6 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
     }),
     UsersModule,
     RestaurantsModule,
-    AuthModule,
     JwtAuthModule.forRoot({ privateKey: process.env.SECRET_KEY_TOKEN }),
     AuthModule,
     MailerModule.forRoot({

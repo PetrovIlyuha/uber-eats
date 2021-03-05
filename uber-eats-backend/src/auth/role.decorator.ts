@@ -3,4 +3,4 @@ import { SetMetadata } from '@nestjs/common';
 
 export type AllowedRoles = keyof typeof UserRole | 'Anybody';
 
-export const Role = (roles: AllowedRoles[]) => SetMetadata('role', [...roles]);
+export const Role = (roles: AllowedRoles[]) => SetMetadata('roles', [...roles]);
