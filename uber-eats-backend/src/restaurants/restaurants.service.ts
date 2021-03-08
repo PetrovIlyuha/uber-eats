@@ -17,6 +17,7 @@ import {
   EditRestaurantOutput,
 } from './dtos/edit-restaurant.dto';
 import { CategoryRepository } from './repositories/category.repository';
+import { AllCategoriesOutput } from './dtos/all-categories.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -53,7 +54,7 @@ export class RestaurantService {
         newRestaurant.owner = owner;
 
         const category = await this.categories.getOrCreate(
-          createRestaurantInput.name,
+          createRestaurantInput.categoryName,
         );
         newRestaurant.category = category;
         await this.restaurants.save(newRestaurant);
@@ -137,5 +138,21 @@ export class RestaurantService {
         error: 'Deletion failed!',
       };
     }
+  }
+
+  async getAllCategories(): Promise<AllCategoriesOutput> {
+    try {
+      const categories = await this.categories.find();
+      return { ok: true, error: null, categories };
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'Could not find any categories',
+      };
+    }
+  }
+
+  countRestaurants(category: Category) {
+    return this.restaurants.count({ category });
   }
 }
