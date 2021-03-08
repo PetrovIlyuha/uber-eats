@@ -1,7 +1,10 @@
 import { Global, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateAccountInput } from './dtos/create-account.dto';
+import {
+  CreateAccountInput,
+  CreateAccountOutput,
+} from './dtos/create-account.dto';
 import { LoginInput } from './dtos/login-user.dto';
 import { User } from './entities/user.entity';
 import { JwtAuthService } from 'src/jwt-auth/jwt-auth.service';
@@ -9,6 +12,7 @@ import { EditProfileInput } from './dtos/edit-profile.dto';
 import { EmailVerificationEntity } from './entities/email-verify.entity';
 import { UserProfileOutput } from './dtos/user-profile.dto';
 import { MailerService } from 'src/mailer/mailer.service';
+import { VerifyEmailOutput } from './dtos/verify-email.dto';
 
 @Injectable()
 @Global()
@@ -25,7 +29,7 @@ export class UserService {
     email,
     password,
     role,
-  }: CreateAccountInput): Promise<{ ok: boolean; error: string }> {
+  }: CreateAccountInput): Promise<CreateAccountOutput> {
     try {
       const existingUser = await this.users.findOne({ email });
       if (existingUser) {
@@ -90,7 +94,7 @@ export class UserService {
 
   async findById(id: number): Promise<UserProfileOutput> {
     try {
-      const user = await this.users.findOneOrFail({ id });
+      const user = await this.users.findOneOrFail(id);
       return {
         ok: true,
         user,
@@ -107,16 +111,24 @@ export class UserService {
     try {
       const user = await this.users.findOne(userId);
       if (email) {
-        user.email = email;
-        user.emailVerified = false;
-        const verificationExists = await this.verifications.findOne({ user });
-        if (verificationExists) {
-          await this.verifications.delete(verificationExists.id);
+        let emailTaken = await this.users.findOne({ email });
+        if (emailTaken) {
+          return {
+            ok: false,
+            error: 'Chosen email address belongs to another registered user!',
+          };
+        } else {
+          user.email = email;
+          user.emailVerified = false;
+          await this.verifications.delete({ user: { id: user.id } });
+          const verification = await this.verifications.save(
+            this.verifications.create({ user }),
+          );
+          this.mailerService.sendVerificationEmail(
+            user.email,
+            verification.code,
+          );
         }
-        const verification = await this.verifications.save(
-          this.verifications.create({ user }),
-        );
-        this.mailerService.sendVerificationEmail(user.email, verification.code);
       }
       if (password) user.password = password;
       if (role) user.role = role;
@@ -131,7 +143,7 @@ export class UserService {
     }
   }
 
-  async verifyEmail(code: string): Promise<boolean> {
+  async verifyEmail(code: string): Promise<VerifyEmailOutput> {
     try {
       const verification = await this.verifications.findOne(
         { code },
@@ -141,11 +153,11 @@ export class UserService {
         verification.user.emailVerified = true;
         await this.users.save(verification.user);
         await this.verifications.delete(verification.id);
-        return true;
+        return { ok: true, error: null };
       }
+      return { ok: false, error: 'Verification not found' };
     } catch (error) {
-      console.log(error);
-      return false;
+      return { ok: false, error: 'Could not verify email' };
     }
   }
 }
