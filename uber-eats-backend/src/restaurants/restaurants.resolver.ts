@@ -1,4 +1,10 @@
 import {
+  SearchRestaurantInput,
+  SearchRestaurantOutput,
+} from './dtos/search-restaurant.dto';
+import { RestaurantsOutput, RestaurantsInput } from './dtos/restaurants.dto';
+import { CategoryOutput, CategoryInput } from './dtos/category.dto';
+import {
   DeleteRestaurantInput,
   DeleteRestaurantOutput,
 } from './dtos/delete-restaurant.dto';
@@ -24,7 +30,7 @@ import { RestaurantService } from './restaurants.service';
 import { Role } from 'src/auth/role.decorator';
 import { Category } from './entities/category.entity';
 import { AllCategoriesOutput } from './dtos/all-categories.dto';
-import { Query } from '@nestjs/common';
+import { RestaurantOutput, RestaurauntInput } from './dtos/restaurant.dto';
 
 @Resolver(() => Restaurant)
 export class RestaurantResolver {
@@ -62,6 +68,29 @@ export class RestaurantResolver {
       deleteRestaurantInput,
     );
   }
+
+  @Mutation(() => RestaurantsOutput)
+  restaurants(
+    @Args('input') restaurantsInput: RestaurantsInput,
+  ): Promise<RestaurantsOutput> {
+    return this.restaurantService.allRestaurants(restaurantsInput);
+  }
+
+  @Mutation(() => RestaurantOutput)
+  restaurant(
+    @Args('input') restaurantInput: RestaurauntInput,
+  ): Promise<RestaurantOutput> {
+    return this.restaurantService.findRestaurantById(restaurantInput);
+  }
+
+  @Mutation(() => SearchRestaurantOutput)
+  searchRestaurant(
+    @Args('input') searchRestaurantInput: SearchRestaurantInput,
+  ): Promise<SearchRestaurantOutput> {
+    return this.restaurantService.searchRestaurantsByName(
+      searchRestaurantInput,
+    );
+  }
 }
 
 @Resolver(() => Category)
@@ -76,5 +105,12 @@ export class CategoryResolver {
   @Mutation((type) => AllCategoriesOutput)
   async allCategories(): Promise<AllCategoriesOutput> {
     return this.restaurantService.getAllCategories();
+  }
+
+  @Mutation((type) => CategoryOutput)
+  async category(
+    @Args('input') categoryInput: CategoryInput,
+  ): Promise<CategoryOutput> {
+    return this.restaurantService.getCategoryBySlug(categoryInput);
   }
 }
