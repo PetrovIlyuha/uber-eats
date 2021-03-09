@@ -1,3 +1,5 @@
+import { RestaurantsInput, RestaurantsOutput } from './dtos/restaurants.dto';
+import { CategoryInput, CategoryOutput } from './dtos/category.dto';
 import {
   DeleteRestaurantInput,
   DeleteRestaurantOutput,
@@ -8,7 +10,7 @@ import {
 } from './dtos/create-restaurant.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { Restaurant } from './entities/restaurant.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Category } from './entities/category.entity';
@@ -18,6 +20,13 @@ import {
 } from './dtos/edit-restaurant.dto';
 import { CategoryRepository } from './repositories/category.repository';
 import { AllCategoriesOutput } from './dtos/all-categories.dto';
+import { RestaurantOutput, RestaurauntInput } from './dtos/restaurant.dto';
+import {
+  SearchRestaurantInput,
+  SearchRestaurantOutput,
+} from './dtos/search-restaurant.dto';
+
+const ITEMS_PER_PAGE = 10;
 
 @Injectable()
 export class RestaurantService {
@@ -152,7 +161,105 @@ export class RestaurantService {
     }
   }
 
-  countRestaurants(category: Category) {
+  countRestaurants(category: Category): Promise<number> {
     return this.restaurants.count({ category });
+  }
+
+  async getCategoryBySlug({
+    slug,
+    page,
+  }: CategoryInput): Promise<CategoryOutput> {
+    try {
+      let category = await this.categories.findOne(
+        { slug },
+        { relations: ['restaurants'] },
+      );
+      if (category) {
+        const restaurants = await this.restaurants.find({
+          where: {
+            category,
+          },
+          take: ITEMS_PER_PAGE,
+          skip: ITEMS_PER_PAGE * (page - 1),
+        });
+
+        let totalResults = await this.countRestaurants(category);
+        return {
+          ok: true,
+          error: null,
+          restaurants,
+          category,
+          totalPages: Math.ceil(totalResults / ITEMS_PER_PAGE),
+        };
+      } else {
+        return { ok: false, error: 'Category was not found' };
+      }
+    } catch (error) {
+      return { ok: false, error: 'Could not find category by given slug' };
+    }
+  }
+
+  async allRestaurants({ page }: RestaurantsInput): Promise<RestaurantsOutput> {
+    try {
+      const [restaurants, totalResults] = await this.restaurants.findAndCount({
+        take: ITEMS_PER_PAGE,
+        skip: (page - 1) * ITEMS_PER_PAGE,
+      });
+      return {
+        ok: true,
+        error: null,
+        totalPages: Math.ceil(totalResults / ITEMS_PER_PAGE),
+        results: restaurants,
+        totalResults,
+      };
+    } catch (error) {
+      return { ok: false, error: 'No restaurants found' };
+    }
+  }
+
+  async findRestaurantById({
+    restaurantId,
+  }: RestaurauntInput): Promise<RestaurantOutput> {
+    try {
+      const restaurant = await this.restaurants.findOne(restaurantId);
+      if (!restaurant) {
+        return {
+          ok: false,
+          error: 'Failed to find restaurant',
+        };
+      }
+      return {
+        ok: true,
+        error: null,
+        restaurant,
+      };
+    } catch (error) {
+      return { ok: false, error: 'Restaurant with given ID was not found.' };
+    }
+  }
+
+  async searchRestaurantsByName({
+    query,
+    page,
+  }: SearchRestaurantInput): Promise<SearchRestaurantOutput> {
+    try {
+      const [restaurants, totalCount] = await this.restaurants.findAndCount({
+        where: { name: ILike(`%${query}%`) },
+        take: ITEMS_PER_PAGE,
+        skip: (page - 1) * ITEMS_PER_PAGE,
+      });
+      return {
+        ok: true,
+        error: null,
+        results: restaurants,
+        totalResults: totalCount,
+        totalPages: Math.ceil(totalCount / ITEMS_PER_PAGE),
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'No results match your query parameter',
+      };
+    }
   }
 }
