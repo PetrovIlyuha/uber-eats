@@ -19,6 +19,10 @@ import { MailerModule } from './mailer/mailer.module';
 import { Category } from './restaurants/entities/category.entity';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { RestaurantsModule } from './restaurants/restaurants.module';
+import { Dish } from './restaurants/entities/dish.entity';
+import { OrdersModule } from './orders/orders.module';
+import { Order } from './orders/entities/order.entity';
+import { OrderItem } from './orders/entities/order-item.entity';
 
 @Module({
   imports: [
@@ -48,7 +52,15 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
       synchronize: process.env.NODE_ENV !== 'prod',
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      entities: [User, EmailVerificationEntity, Category, Restaurant],
+      entities: [
+        User,
+        EmailVerificationEntity,
+        Category,
+        Restaurant,
+        Dish,
+        Order,
+        OrderItem,
+      ],
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
@@ -61,6 +73,7 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
     MailerModule.forRoot({
       sendGridApiKey: process.env.SENDGRID_API_KEY,
     }),
+    OrdersModule,
   ],
   controllers: [],
   providers: [],
