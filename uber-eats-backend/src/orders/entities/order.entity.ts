@@ -1,4 +1,3 @@
-import { Dish } from './../../restaurants/entities/dish.entity';
 import { User } from './../../users/entities/user.entity';
 import {
   Field,
@@ -8,12 +7,22 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import { CoreEntity } from 'src/common/entities/core.entity';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  RelationId,
+} from 'typeorm';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
+import { OrderItem } from './order-item.entity';
+import { IsEnum, IsNumber } from 'class-validator';
 
 export enum OrderStatus {
   Pending = 'Pending',
   Cooking = 'Cooking',
+  ReadyForDelivery = 'ReadyForDelivery',
   PickedUp = 'PickedUp',
   Delivered = 'Delivered',
 }
@@ -38,23 +47,31 @@ export class Order extends CoreEntity {
   })
   driver: User;
 
-  @Field((_) => Restaurant)
+  @Field((_) => Restaurant, { nullable: true })
   @ManyToOne((type) => Restaurant, (restaurant) => restaurant.orders, {
     onDelete: 'SET NULL',
     nullable: true,
   })
-  restaurant: Restaurant;
+  restaurant?: Restaurant;
 
-  @Field((_) => [Dish])
-  @ManyToMany(() => Dish)
+  @Field((_) => [OrderItem])
+  @ManyToMany(() => OrderItem)
   @JoinTable()
-  dishes: Dish[];
+  items: OrderItem[];
 
-  @Column()
-  @Field((_) => Float)
-  total: number;
+  @Column({ nullable: true })
+  @IsNumber()
+  @Field((_) => Float, { nullable: true })
+  total?: number;
 
-  @Column({ type: 'enum', enum: OrderStatus })
+  @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.Pending })
+  @IsEnum(OrderStatus)
   @Field((_) => OrderStatus)
   status: OrderStatus;
+
+  @RelationId((order: Order) => order.customer)
+  customerId: number;
+
+  @RelationId((order: Order) => order.driver)
+  driverId: number;
 }
