@@ -1,3 +1,4 @@
+import { TakeOrderOutput, TakeOrderInput } from './dtos/take-order.dto';
 import { OrderUpdatesInput } from './dtos/order-updates.dto';
 import {
   NEW_PENDING_ORDER,
@@ -99,5 +100,14 @@ export class OrdersResolver {
   @Role(['Anybody'])
   orderUpdates(@Args('input') orderUpdatesInput: OrderUpdatesInput) {
     return this.pubSub.asyncIterator(NEW_ORDER_UPDATE);
+  }
+
+  @Mutation((_) => TakeOrderOutput)
+  @Role(['Delivery'])
+  takeOrder(
+    @AuthUser() driver: User,
+    @Args('input') takeOrderInput: TakeOrderInput,
+  ): Promise<TakeOrderOutput> {
+    return this.ordersService.takeOrder(driver, takeOrderInput);
   }
 }
