@@ -1,18 +1,12 @@
-import { UserService } from 'src/users/users.service';
 import * as Joi from 'joi';
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { JwtAuthModule } from './jwt-auth/jwt-auth.module';
-import { JwtMiddleware } from './jwt-auth/jwt-auth.middleware';
 import { AuthModule } from './auth/auth.module';
 import { EmailVerificationEntity } from './users/entities/email-verify.entity';
 import { MailerModule } from './mailer/mailer.module';
@@ -24,9 +18,12 @@ import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/order.entity';
 import { OrderItem } from './orders/entities/order-item.entity';
 import { CommonModule } from './common/common.module';
+import { PaymentsModule } from './payments/payments.module';
+import { Payment } from './payments/entities/payment.entity';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.env.test',
@@ -61,6 +58,7 @@ import { CommonModule } from './common/common.module';
         Dish,
         Order,
         OrderItem,
+        Payment,
       ],
     }),
     GraphQLModule.forRoot({
@@ -76,12 +74,14 @@ import { CommonModule } from './common/common.module';
     UsersModule,
     CommonModule,
     RestaurantsModule,
+    PaymentsModule,
     JwtAuthModule.forRoot({ privateKey: process.env.SECRET_KEY_TOKEN }),
     AuthModule,
     MailerModule.forRoot({
       sendGridApiKey: process.env.SENDGRID_API_KEY,
     }),
     OrdersModule,
+    PaymentsModule,
   ],
   controllers: [],
   providers: [],
