@@ -42,9 +42,6 @@ export class RestaurantService {
     private readonly categories: CategoryRepository,
   ) {}
 
-  getAll(): Promise<Restaurant[]> {
-    return this.restaurants.find();
-  }
   async createRestaurant(
     owner: User,
     createRestaurantInput: CreateRestaurantInput,
@@ -187,6 +184,9 @@ export class RestaurantService {
           },
           take: ITEMS_PER_PAGE,
           skip: ITEMS_PER_PAGE * (page - 1),
+          order: {
+            isPromoted: 'DESC',
+          },
         });
 
         let totalResults = await this.countRestaurants(category);
@@ -210,6 +210,7 @@ export class RestaurantService {
       const [restaurants, totalResults] = await this.restaurants.findAndCount({
         take: ITEMS_PER_PAGE,
         skip: (page - 1) * ITEMS_PER_PAGE,
+        order: { isPromoted: 'DESC' },
       });
       return {
         ok: true,
@@ -255,6 +256,7 @@ export class RestaurantService {
         where: { name: ILike(`%${query}%`) },
         take: ITEMS_PER_PAGE,
         skip: (page - 1) * ITEMS_PER_PAGE,
+        order: { isPromoted: 'DESC' },
       });
       return {
         ok: true,
