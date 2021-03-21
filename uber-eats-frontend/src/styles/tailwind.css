@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+
+.btn_base {
+  @apply rounded-md;
+  @apply bg-green-500;
+  @apply  text-white;
+}
+
+.btn_base:hover {
+  @apply outline-none;
+  @apply opacity-90;
+  @apply bg-green-700;
+}
+
+
+.btn_emerald {
+  @apply rounded-md;
+  @apply bg-emerald-400;
+  @apply  text-white;
+}
+.btn_emerald:hover {
+  @apply outline-none;
+  @apply opacity-90;
+  @apply bg-emerald-500;
+}
+
+.input {
+  @apply bg-gray-100 shadow-inner py-5 px-2 rounded-md;
+}
+
+.input:focus {
+  @apply bg-green-200;
+  @apply outline-none;
+  @apply ring-2;
+  @apply ring-green-600;
+  @apply ring-opacity-90;
+}
+
+@tailwind utilities;
