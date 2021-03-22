@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { Link, useHistory } from 'react-router-dom'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import gql from 'graphql-tag'
