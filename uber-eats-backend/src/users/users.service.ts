@@ -144,18 +144,23 @@ export class UserService {
   }
 
   async verifyEmail(code: string): Promise<VerifyEmailOutput> {
+    console.log(code);
+
     try {
       const verification = await this.verifications.findOne(
         { code },
         { relations: ['user'] },
       );
+      console.log(verification);
+
       if (verification) {
         verification.user.emailVerified = true;
         await this.users.save(verification.user);
         await this.verifications.delete(verification.id);
         return { ok: true, error: null };
+      } else {
+        return { ok: false, error: 'Verification not found' };
       }
-      return { ok: false, error: 'Verification not found' };
     } catch (error) {
       return { ok: false, error: 'Could not verify email' };
     }
