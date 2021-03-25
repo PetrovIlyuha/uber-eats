@@ -17,7 +17,6 @@ const FormError: React.FC<FormErrorProps> = ({message}) => {
   return (
     <span className="font-medium text-red-400">
       {messages[message] ? messages[message] : message}
-      {/* {messages[message]} */}
     </span>
   )
 }

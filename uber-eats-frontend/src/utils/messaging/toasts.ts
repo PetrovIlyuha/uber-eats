@@ -21,4 +21,5 @@ export const passwordError = new ToastFactory('Password must contain !@#, lowerc
 export const shortPasswordError = new ToastFactory("Password must be longer than 8 characters!")
 export const accountCreationFailed = new ToastFactory("Failed to crate an account! Try again later!")
 export const accountCreated = new ToastFactory('Your account was created!')
+export const profileUpdated = new ToastFactory("Your profile was updated!")
 export default ToastFactory

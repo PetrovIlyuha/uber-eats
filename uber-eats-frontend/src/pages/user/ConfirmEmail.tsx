@@ -16,11 +16,10 @@ const VERIFY_EMAIL_MUTATION = gql`
 `
 const ConfirmEmail = () => {
   const client = useApolloClient()
-  const { data: userData } = useCurrentUser()
+  const { data: userData, refetch } = useCurrentUser()
   const history = useHistory()
   const onEmailVerified = (data: verifyEmail) => {
     const { verifyEmail: { ok } } = data
-    console.log("email", data)
     if (ok && userData?.me) {
       client.writeFragment({
         id: `User:${userData?.me.id}`,
