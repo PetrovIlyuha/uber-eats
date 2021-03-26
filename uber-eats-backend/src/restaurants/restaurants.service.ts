@@ -30,7 +30,7 @@ import {
   SearchRestaurantOutput,
 } from './dtos/search-restaurant.dto';
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 6;
 
 @Injectable()
 export class RestaurantService {
@@ -67,6 +67,7 @@ export class RestaurantService {
 
         const category = await this.categories.getOrCreate(
           createRestaurantInput.categoryName,
+          createRestaurantInput.categoryImage,
         );
         newRestaurant.category = category;
         await this.restaurants.save(newRestaurant);
@@ -106,6 +107,7 @@ export class RestaurantService {
       if (editRestaurantInput.categoryName) {
         category = await this.categories.getOrCreate(
           editRestaurantInput.categoryName,
+          editRestaurantInput.categoryImage,
         );
       }
       await this.restaurants.save([

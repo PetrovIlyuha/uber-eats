@@ -10,6 +10,9 @@ export class CreateRestaurantInput extends PickType(Restaurant, [
 ]) {
   @Field(() => String)
   categoryName: string;
+
+  @Field(() => String)
+  categoryImage?: string;
 }
 
 @ObjectType()
