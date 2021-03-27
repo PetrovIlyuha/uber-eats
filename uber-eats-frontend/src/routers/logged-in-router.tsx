@@ -9,6 +9,8 @@ import useCurrentUser from '../hooks/useCurrentUser'
 import ConfirmEmail from '../pages/user/ConfirmEmail'
 import SpinnerBasic from '../components/reusable/SpinnerBasic'
 import EditProfile from '../pages/user/EditProfile'
+import SearchPage from '../pages/client/SearchPage'
+import Category from '../pages/client/Category'
 
 const ClientRouter = () => (
   <Switch>
@@ -45,11 +47,17 @@ export const LoggedInRouter = () => {
           <Route path="/" exact>
             <Restaurants />
           </Route>
-          <Route path="/confirm" exact>
+          <Route path="/confirm">
             <ConfirmEmail />
           </Route>
-          <Route path="/edit-profile" exact>
+          <Route path="/edit-profile">
             <EditProfile />
+          </Route>
+          <Route path="/category/:slug">
+            <Category />
+          </Route>
+          <Route path="/search">
+            <SearchPage />
           </Route>
           <Route component={Page404} />
         </Switch>
