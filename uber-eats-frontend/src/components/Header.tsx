@@ -12,7 +12,7 @@ const Header: React.FC = () => {
       {!data?.me.emailVerified && <div className="bg-red-400 py-3 px-3 text-center text-sm text-white">
         <span>Please verify your email ⚠ </span>
       </div>}
-      <header className="sticky top-0 z-10 shadow-md bg-gradient-to-r from-emerald-800 via-green-400 to-emerald-300 py-4">
+      <header className="sticky top-0 z-10 shadow-md bg-gradient-to-r from-emerald-500 via-green-400 to-emerald-300 py-4">
         <div className="w-full px-5 xl:px-0 max-w-screen-lg mx-auto flex justify-between items-center">
           <Link to="/">
             <img src={Logo} alt="logo" className="w-24" />
