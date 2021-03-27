@@ -20,6 +20,7 @@ import {
   Args,
   Mutation,
   Parent,
+  Query,
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
@@ -73,21 +74,21 @@ export class RestaurantResolver {
     );
   }
 
-  @Mutation(() => RestaurantsOutput)
+  @Query(() => RestaurantsOutput)
   restaurants(
     @Args('input') restaurantsInput: RestaurantsInput,
   ): Promise<RestaurantsOutput> {
     return this.restaurantService.allRestaurants(restaurantsInput);
   }
 
-  @Mutation(() => RestaurantOutput)
+  @Query(() => RestaurantOutput)
   restaurant(
     @Args('input') restaurantInput: RestaurauntInput,
   ): Promise<RestaurantOutput> {
     return this.restaurantService.findRestaurantById(restaurantInput);
   }
 
-  @Mutation(() => SearchRestaurantOutput)
+  @Query(() => SearchRestaurantOutput)
   searchRestaurant(
     @Args('input') searchRestaurantInput: SearchRestaurantInput,
   ): Promise<SearchRestaurantOutput> {
@@ -106,12 +107,12 @@ export class CategoryResolver {
     return this.restaurantService.countRestaurants(category);
   }
 
-  @Mutation((type) => AllCategoriesOutput)
+  @Query((type) => AllCategoriesOutput)
   async allCategories(): Promise<AllCategoriesOutput> {
     return this.restaurantService.getAllCategories();
   }
 
-  @Mutation((type) => CategoryOutput)
+  @Query((type) => CategoryOutput)
   async category(
     @Args('input') categoryInput: CategoryInput,
   ): Promise<CategoryOutput> {
