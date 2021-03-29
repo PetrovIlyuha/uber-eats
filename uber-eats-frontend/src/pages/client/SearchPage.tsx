@@ -1,8 +1,10 @@
 import { useLazyQuery } from '@apollo/client'
 import gql from 'graphql-tag'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useHistory, useLocation } from 'react-router'
+import Restaurant from '../../components/restaurants/Restaurant'
+import Container from '../../components/reusable/Container'
 import { searchRestaurant, searchRestaurantVariables } from '../../__api_schema_typed__/searchRestaurant'
 
 const SEARCH_RESTAURANT = gql`
@@ -42,6 +44,7 @@ const SearchPage: React.FC = () => {
       searchRestarant({ variables: { input: { page: 1, query: searchFor } } })
     }
   }, [history, search])
+
   console.log(loading, data, called)
   return (
     <div>
@@ -51,7 +54,22 @@ const SearchPage: React.FC = () => {
           <title> Restaurants for "{searchFor}" search</title>
         )}
       </Helmet>
-
+      {!loading && data?.searchRestaurant?.results?.[0] && (
+        <Container>
+          <div className="mt-12 flex flex-col">
+            <div className="mx-auto mb-5">
+              <img className="rounded-full h-12 w-14" src={data?.searchRestaurant?.results?.[0].category?.coverImage} alt="category promo image" />
+            </div>
+            <h2 className="text-bold">Found the <strong>"{data?.searchRestaurant?.results?.[0].name}"</strong> place for you</h2>
+          <Restaurant
+            coverImage={data?.searchRestaurant?.results?.[0]?.coverImage}
+            name={data?.searchRestaurant?.results?.[0]?.name}
+            categoryName={data?.searchRestaurant?.results?.[0]?.category?.name}
+            />
+            <h3>Address: {data?.searchRestaurant?.results?.[0]?.address}</h3>
+          </div>
+        </Container>
+      )}
     </div >
   )
 }
