@@ -198,6 +198,7 @@ export class RestaurantService {
           restaurants,
           category,
           totalPages: Math.ceil(totalResults / ITEMS_PER_PAGE),
+          totalResults,
         };
       } else {
         return { ok: false, error: 'Category was not found' };
