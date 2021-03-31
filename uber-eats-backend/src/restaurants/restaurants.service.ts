@@ -29,6 +29,7 @@ import {
   SearchRestaurantInput,
   SearchRestaurantOutput,
 } from './dtos/search-restaurant.dto';
+import { OwnerRestaurantsOutput } from './dtos/owner-restaurants.dto';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -80,6 +81,18 @@ export class RestaurantService {
       return {
         ok: false,
         error: 'Could not create new restaurant',
+      };
+    }
+  }
+
+  async ownerRestaurants(owner: User): Promise<OwnerRestaurantsOutput> {
+    try {
+      const restaurants = await this.restaurants.find({ owner });
+      return { restaurants, ok: true, error: null };
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'Your restaurants list is empty. Create one!',
       };
     }
   }
