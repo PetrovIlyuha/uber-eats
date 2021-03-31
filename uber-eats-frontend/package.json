@@ -39,7 +39,8 @@
     "start": "npm run apollo:codegen & npm run tailwind:build & react-scripts start",
     "apollo:codegen": "rimraf src/__api_schema_typed__/ & apollo client:codegen src/__api_schema_typed__/ --target=typescript --outputFlat",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --verbose",
+    "test:coverage": "npm test -- --coverage --watch",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -58,6 +59,13 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "./src/components/**/*.tsx",
+      "./src/routers/**/*.tsx",
+      "./src/pages/**/*.tsx"
     ]
   }
 }
