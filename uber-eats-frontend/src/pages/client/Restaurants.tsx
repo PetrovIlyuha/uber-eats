@@ -1,15 +1,19 @@
-import { useMutation, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
+import { useForm } from 'react-hook-form'
+import { useHistory } from 'react-router'
+import { Link } from 'react-router-dom'
 import CategoriesIconsBar from '../../components/categories/CategoriesIconsBar'
 import Restaurant from '../../components/restaurants/Restaurant'
 import Container from '../../components/reusable/Container'
 import RestaurantsPaginator from '../../components/reusable/RestaurantsPaginator'
+import HeroBanner from '../../images/hero_banner-min.jpg'
 import { restaurantsPageQuery, restaurantsPageQueryVariables } from '../../__api_schema_typed__/restaurantsPageQuery'
 
 const RESTAURANTS_QUERY = gql`
-  mutation restaurantsPageQuery($input: RestaurantsInput!) {
+  query restaurantsPageQuery($input: RestaurantsInput!) {
     allCategories {
         ok
         error
@@ -37,25 +41,21 @@ const RESTAURANTS_QUERY = gql`
         address
         isPromoted
       }
+    }
   }
-  }
-
-`
+`;
 
 
 const Restaurants = () => {
   const [page, setPage] = useState(1)
-  const [getRestaurantsPage, { data, loading, error }] =
-    useMutation<restaurantsPageQuery, restaurantsPageQueryVariables>(
-      RESTAURANTS_QUERY,
-      {
-        variables: { input: { page } }
-      })
+  const history = useHistory()
+  const { register, handleSubmit, getValues } = useForm()
+  const { data, loading } = useQuery<restaurantsPageQuery, restaurantsPageQueryVariables>(
+    RESTAURANTS_QUERY,
+    {
+      variables: { input: { page } }
+    })
 
-  useEffect(() => {
-    getRestaurantsPage()
-  }, [page])
-  console.log(data);
   const changeToNextPage = () => {
     setPage(page => page + 1)
   }
@@ -63,13 +63,21 @@ const Restaurants = () => {
     setPage(page => page - 1)
   }
 
+  const onSearchSubmit = () => {
+    const { search } = getValues()
+    history.push({
+      pathname: '/search',
+      search: `?term=${search}`
+    })
+  }
+  console.log(data)
   return (
     <>
       <Helmet>
         <title>Restaurants | Grabs Eaters</title>
       </Helmet>
-      <form className="bg-gray-800 w-full py-28 flex items-center justify-center">
-        <input type="search" placeholder="Search for restaurant..." className="input py-2 w-3/12" />
+      <form onSubmit={handleSubmit(onSearchSubmit)} className="bg-gray-800 w-full py-28 flex items-center justify-center" style={{ backgroundImage: `url(${HeroBanner})`, backgroundSize: 'cover' }}>
+        <input name="search" ref={register({ required: true })} type="search" placeholder="Search for restaurant..." className="input py-2 w-3/4 md:w-4/12" />
       </form>
       {!loading && data?.allCategories && (
         <Container>
@@ -82,13 +90,14 @@ const Restaurants = () => {
           />
           <div className="mt-10 grid lg:grid-cols-3 md:grid-cols-2 gap-x-5 gap-y-10">
             {data?.restaurants?.results?.map(restaurant => (
-              <Restaurant
-                key={restaurant.id}
-                id={String(restaurant.id)}
-                coverImage={restaurant?.coverImage}
-                name={restaurant?.name}
-                categoryName={restaurant?.category?.name}
-              />
+              <Link to={`/restaurant/${restaurant.id}`}>
+                <Restaurant
+                  key={restaurant.id}
+                  coverImage={restaurant?.coverImage}
+                  name={restaurant?.name}
+                  categoryName={restaurant?.category?.name}
+                />
+              </Link>
             ))}
           </div>
           <RestaurantsPaginator

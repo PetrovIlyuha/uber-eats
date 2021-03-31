@@ -34,7 +34,7 @@ const Login = () => {
     isLoggedInVar(true)
   }
   const onLoginComplete = (data: LoginMutation) => {
-    const { login: { error, ok, token } } = data;
+    const { login: { ok, token } } = data;
     if (ok && token) {
       localStorage.setItem(LOCAL_STORAGE_TOKEN, token)
       authToken(token)
