@@ -63,7 +63,11 @@ export class RestaurantService {
             'Name, Address, or Cover Image already in use. Refused to create..',
         };
       } else {
-        let newRestaurant = this.restaurants.create(createRestaurantInput);
+        let newRestaurant = this.restaurants.create({
+          name: createRestaurantInput.name,
+          coverImage: createRestaurantInput.coverImage,
+          address: createRestaurantInput.address,
+        });
         newRestaurant.owner = owner;
 
         const category = await this.categories.getOrCreate(
