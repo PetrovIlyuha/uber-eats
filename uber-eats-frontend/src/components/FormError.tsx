@@ -13,9 +13,9 @@ const messages: MessagesMap = {
   shortPassword: "Password must be at least 8 characters long"
 }
 
-const FormError: React.FC<FormErrorProps> = ({message}) => {
+const FormError: React.FC<FormErrorProps> = ({ message }) => {
   return (
-    <span className="font-medium text-red-400">
+    <span role="alert" className="font-medium text-red-400">
       {messages[message] ? messages[message] : message}
     </span>
   )
