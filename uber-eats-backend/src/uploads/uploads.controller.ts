@@ -7,11 +7,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as AWS from 'aws-sdk';
 
-//AKIAYEYCZJOZ6QI47FXO
-// G8DCxLJf50U3Gfvs7Beu7Nf5r/AWLzhEAeQylDQx
-
 const BUCKET_NAME = 'grabs-eaters-uploads';
-
 @Controller('uploads')
 export class UploadsController {
   @Post('')
