@@ -15,7 +15,7 @@ const messages: MessagesMap = {
 
 const FormError: React.FC<FormErrorProps> = ({ message }) => {
   return (
-    <span role="alert" className="font-medium text-red-400">
+    <span role="alert" className="font-medium text-white bg-red-400 text-center rounded-md py-1 px-2">
       {messages[message] ? messages[message] : message}
     </span>
   )

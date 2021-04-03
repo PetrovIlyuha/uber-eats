@@ -6,6 +6,7 @@ import { BasicResponse } from 'src/common/dtos/mutation-response.dto';
 export class CreateDishInput extends PickType(Dish, [
   'name',
   'price',
+  'photo',
   'description',
   'options',
 ]) {

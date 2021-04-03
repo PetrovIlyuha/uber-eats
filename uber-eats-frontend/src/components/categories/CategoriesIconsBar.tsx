@@ -13,9 +13,9 @@ const CategoriesIconsBar: React.FC<CategoriesData> = ({ data }) => {
       {data?.map((category, idx) => (
         <Link to={`/category/${category.slug}`} key={category.id}>
           <motion.div
-            initial={{ x: -100 * idx }}
-            animate={{ x: 0 }}
-            transition={{ ease: "easeIn", duration: 0.2 * idx }}
+            initial={{ x: -100 * idx, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ ease: "easeIn", duration: 0.2 * idx, delay: 0.1 * idx }}
             className="flex flex-col items-center group cursor-pointer"
           >
             <div key={category.id} className="lg:w-14 lg:h-14 md:w-12 md:h-12 w-10 h-10 rounded-full bg-cover transition-all duration-75 transform hover:scale-110" style={{ backgroundImage: `url(${category.coverImage})` }}></div>
