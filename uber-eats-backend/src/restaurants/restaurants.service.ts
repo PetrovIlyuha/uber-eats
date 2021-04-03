@@ -30,6 +30,10 @@ import {
   SearchRestaurantOutput,
 } from './dtos/search-restaurant.dto';
 import { OwnerRestaurantsOutput } from './dtos/owner-restaurants.dto';
+import {
+  OwnerRestaurantInput,
+  OwnerRestaurantOutput,
+} from './dtos/owner-restaurant.dto';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -79,6 +83,7 @@ export class RestaurantService {
         return {
           ok: true,
           error: null,
+          restaurantId: newRestaurant.id,
         };
       }
     } catch (error) {
@@ -97,6 +102,21 @@ export class RestaurantService {
       return {
         ok: false,
         error: 'Your restaurants list is empty. Create one!',
+      };
+    }
+  }
+
+  async ownerSingleRestaurant(
+    owner: User,
+    { id }: OwnerRestaurantInput,
+  ): Promise<OwnerRestaurantOutput> {
+    try {
+      const restaurant = await this.restaurants.findOne({ owner, id });
+      return { ok: true, error: null, restaurant };
+    } catch (error) {
+      return {
+        ok: false,
+        error: 'Counl not find restaurant!',
       };
     }
   }
