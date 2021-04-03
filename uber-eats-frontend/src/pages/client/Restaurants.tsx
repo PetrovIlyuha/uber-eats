@@ -90,7 +90,7 @@ const Restaurants = () => {
           />
           <div className="mt-10 grid lg:grid-cols-3 md:grid-cols-2 gap-x-5 gap-y-10">
             {data?.restaurants?.results?.map(restaurant => (
-              <Link to={`/restaurant/${restaurant.id}`}>
+              <Link to={`/restaurant/${restaurant.id}`} key={restaurant.id}>
                 <Restaurant
                   key={restaurant.id}
                   coverImage={restaurant?.coverImage}
