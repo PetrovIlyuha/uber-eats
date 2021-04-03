@@ -83,7 +83,7 @@ const Login = () => {
             placeholder="Email"
             type="email"
             className="input mb-3"
-            ref={register({ required: "Email is requires", pattern: emailValid })}
+            ref={register({ required: "Email is required", pattern: emailValid })}
           />
           {errors.email && <FormError message="Email is not valid address" />}
           <input
