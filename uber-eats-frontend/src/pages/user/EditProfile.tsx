@@ -1,12 +1,12 @@
 import React from 'react'
-import { useApolloClient, useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import gql from 'graphql-tag'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import FormError from '../../components/FormError'
 import MainButton from '../../components/MainButton'
 import useCurrentUser from '../../hooks/useCurrentUser'
-import { passwordError, profileUpdated, shortPasswordError } from '../../utils/messaging/toasts'
+import { profileUpdated } from '../../utils/messaging/toasts'
 import { editProfile, editProfileVariables } from '../../__api_schema_typed__/editProfile'
 import { UserRole } from '../../__api_schema_typed__/globalTypes'
 
@@ -53,7 +53,7 @@ const EditProfile = () => {
 
   return (
     <div className="mt-52 flex flex-col justify-center items-center">
-       <Helmet>
+      <Helmet>
         <title>Edit Profile | Grabs Eaters</title>
       </Helmet>
       <h2 className="text-2xl font-semibold">Edit Profile</h2>

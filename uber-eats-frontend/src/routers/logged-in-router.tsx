@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
-import { isLoggedInVar } from '../apollo'
+// import { isLoggedInVar } from '../apollo'
 import Restaurants from '../pages/client/Restaurants'
 import Page404 from '../pages/404'
 import Header from '../components/Header'
@@ -11,23 +11,37 @@ import SpinnerBasic from '../components/reusable/SpinnerBasic'
 import EditProfile from '../pages/user/EditProfile'
 import SearchPage from '../pages/client/SearchPage'
 import Category from '../pages/client/Category'
-
-const ClientRouter = () => (
-  <Switch>
-    <Route path="/" exact>
-      <Restaurants />
-    </Route>
-    <Route path="/confirm">
-      <ConfirmEmail />
-    </Route>
-    <Route component={Page404} />
-  </Switch>
-)
+import Restaurant from '../pages/client/Restaurant'
+import MyRestaurants from '../pages/owner/MyRestaurants'
+import AddRestaurant from '../pages/owner/AddRestaurant'
+import { ScrollToTopControlller } from '../hooks/scrollTopHook'
+import SingleRestaurant from '../pages/owner/SingleRestaurant'
+import CreateDish from '../pages/owner/CreateDish'
 
 export const LoggedInRouter = () => {
-  const logOut = () => {
-    isLoggedInVar(false)
-  }
+  // const logOut = () => {
+  //   isLoggedInVar(false)
+  // }
+
+  const clientRoutes = [
+    { path: "/", page: Restaurants, exact: true },
+    { path: "/category/:slug", page: Category, exact: false },
+    { path: "/restaurant/:id", page: Restaurant, exact: false },
+    { path: "/search", page: SearchPage, exact: false },
+  ]
+
+  const ownerRoutes = [
+    { path: "/", page: MyRestaurants, exact: true },
+    { path: "/add-restaurant", page: AddRestaurant, exact: false },
+    { path: "/restaurant/:restaurantId/addMenuItem", page: CreateDish, exact: true },
+    { path: "/restaurant/:id", page: SingleRestaurant, exact: false },
+  ]
+
+  const commonRoutes = [
+    { path: "/edit-profile", page: EditProfile, exact: false },
+    { path: "/confirm", page: ConfirmEmail, exact: false },
+    { path: "*", page: Page404, exact: false }
+  ]
   const { data, loading, error } = useCurrentUser();
   if (!data || loading || error) {
     return (
@@ -42,26 +56,11 @@ export const LoggedInRouter = () => {
   return (
     <Router>
       <Header />
-      {data.me.role === 'Client' && (
-        <Switch>
-          <Route path="/" exact>
-            <Restaurants />
-          </Route>
-          <Route path="/confirm">
-            <ConfirmEmail />
-          </Route>
-          <Route path="/edit-profile">
-            <EditProfile />
-          </Route>
-          <Route path="/category/:slug">
-            <Category />
-          </Route>
-          <Route path="/search">
-            <SearchPage />
-          </Route>
-          <Route component={Page404} />
-        </Switch>
-      )}
+      <ScrollToTopControlller />
+      <Switch>
+        {data.me.role === 'Client' && [...clientRoutes, ...commonRoutes].map(route => <Route key={route.path} path={route.path} component={route.page} exact={route.exact} />)}
+        {data.me.role === "Owner" && [...ownerRoutes, ...commonRoutes].map(route => <Route key={route.path} path={route.path} component={route.page} exact={route.exact} />)}
+      </Switch>
     </Router >
   )
 }
