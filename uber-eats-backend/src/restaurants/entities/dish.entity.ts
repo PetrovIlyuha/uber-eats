@@ -1,4 +1,4 @@
-import { Field, Float, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { IsNumber, IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entity';
 import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
@@ -8,7 +8,11 @@ import { Restaurant } from './restaurant.entity';
 @ObjectType()
 export class DishChoice {
   @Field((type) => String)
+  id: string;
+
+  @Field((type) => String)
   name: string;
+
   @Field((type) => Int, { nullable: true })
   extra?: number;
 }
@@ -16,6 +20,9 @@ export class DishChoice {
 @InputType('DishOptionInputType', { isAbstract: true })
 @ObjectType()
 export class DishOption {
+  @Field((type) => String)
+  id: string;
+
   @Field((type) => String)
   name: string;
   @Field((type) => [DishChoice], { nullable: true })
@@ -34,8 +41,9 @@ export class Dish extends CoreEntity {
   @Length(5)
   name: string;
 
-  @Field((type) => Float)
+  @Field((type) => Int)
   @Column()
+  @IsNumber()
   price: number;
 
   @Field((type) => String, { nullable: true })
