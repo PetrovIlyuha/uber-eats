@@ -53,20 +53,23 @@ export class OrdersService {
         }
 
         let dishPrice = dish.price;
-        for (const itemOption of item.options) {
-          const optionOnDish = dish.options.find(
-            (op) => op.name === itemOption.name,
-          );
-          if (optionOnDish) {
-            if (optionOnDish.extra) {
-              dishPrice += optionOnDish.extra;
-            }
-            const dishOptionsChoice = optionOnDish.choices.find(
-              (ch) => ch.name == itemOption.choice,
+
+        if (item.options.length) {
+          for (const itemOption of item.options) {
+            const optionOnDish = dish.options.find(
+              (op) => op.name === itemOption.name,
             );
-            if (dishOptionsChoice) {
-              if (dishOptionsChoice.extra) {
-                dishPrice += dishOptionsChoice.extra;
+            if (optionOnDish) {
+              if (optionOnDish.extra) {
+                dishPrice += optionOnDish.extra;
+              }
+              const dishOptionsChoice = optionOnDish.choices.find(
+                (ch) => ch.name == itemOption.choice,
+              );
+              if (dishOptionsChoice) {
+                if (dishOptionsChoice.extra) {
+                  dishPrice += dishOptionsChoice.extra;
+                }
               }
             }
           }
@@ -75,7 +78,7 @@ export class OrdersService {
         const orderItem = await this.orderItems.save(
           this.orderItems.create({
             dish,
-            options: item.options,
+            ...(item.options.length && { options: item.options }),
           }),
         );
         orderItems.push(orderItem);
@@ -97,6 +100,7 @@ export class OrdersService {
         error: null,
       };
     } catch (error) {
+      console.log(error);
       return {
         ok: false,
         error: 'Failed to create an order!',
