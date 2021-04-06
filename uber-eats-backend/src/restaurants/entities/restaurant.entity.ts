@@ -47,7 +47,7 @@ export class Restaurant extends CoreEntity {
   ownerId: number;
 
   @Field(() => [Order])
-  @OneToMany((type) => Order, (order) => order.restaurant)
+  @OneToMany((type) => Order, (order) => order.restaurant, { eager: true })
   orders: Order[];
 
   @Field(() => Boolean)
