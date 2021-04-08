@@ -72,7 +72,7 @@ const Restaurants = () => {
   }
   console.log(data)
   return (
-    <>
+    <div className="bg-gray-100" h-full>
       <Helmet>
         <title>Restaurants | Grabs Eaters</title>
       </Helmet>
@@ -108,7 +108,7 @@ const Restaurants = () => {
           />
         </Container>
       )}
-    </>
+    </div>
   )
 }
 
