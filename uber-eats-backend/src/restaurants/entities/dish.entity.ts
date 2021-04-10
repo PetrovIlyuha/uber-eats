@@ -38,7 +38,7 @@ export class Dish extends CoreEntity {
   @Field((type) => String)
   @Column()
   @IsString()
-  @Length(5)
+  @Length(3)
   name: string;
 
   @Field((type) => Int)

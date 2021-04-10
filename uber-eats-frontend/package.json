@@ -30,11 +30,13 @@
     "react-helmet-async": "^1.0.9",
     "react-hook-form": "^6.15.5",
     "react-icons": "^4.2.0",
+    "react-intersection-observer": "^8.31.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.0-next.98",
     "rimraf": "^3.0.2",
     "tailwindcss": "^2.0.4",
     "typescript": "^4.1.2",
+    "victory": "^35.4.13",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
