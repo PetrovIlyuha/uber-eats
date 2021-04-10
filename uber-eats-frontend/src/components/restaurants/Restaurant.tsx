@@ -12,11 +12,6 @@ const Restaurant: React.FC<RestaurantProps> = ({ coverImage, name, categoryName 
   const [ref, inView] = useInView({
     threshold: 0.35
   });
-
-  useEffect(() => {
-    console.log(inView)
-  }, [inView])
-
   return (
     <motion.div
       ref={ref}
