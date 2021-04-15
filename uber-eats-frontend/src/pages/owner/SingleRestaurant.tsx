@@ -2,10 +2,13 @@ import { useQuery } from '@apollo/client'
 import { motion } from 'framer-motion'
 import gql from 'graphql-tag'
 import React, { useEffect, useState } from 'react'
+import { VictoryChart, VictoryVoronoiContainer, VictoryLine, VictoryAxis, VictoryTheme, VictoryLabel, VictoryTooltip } from 'victory'
+import { useInView } from 'react-intersection-observer'
 import { BiDish } from 'react-icons/bi'
 import { RiAdvertisementLine } from 'react-icons/ri'
 import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
+import Dish from '../../components/restaurants/Dish'
 import Container from '../../components/reusable/Container'
 import SpinnerBasic from '../../components/reusable/SpinnerBasic'
 import { ownerSingleRestaurant, ownerSingleRestaurantVariables, ownerSingleRestaurant_ownersSingleRestaurant_restaurant_menu } from '../../__api_schema_typed__/ownerSingleRestaurant'
@@ -44,6 +47,30 @@ export const QUERY_MY_RESTAURANT = gql`
             }
           }
         }
+        orders {
+          createdAt
+            customer {
+              id
+              email
+            }
+        total
+          items {
+           dish {
+              name
+              price
+              options {
+                id
+                name
+                extra
+                choices {
+                  id
+                  name
+                  extra
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -51,10 +78,18 @@ export const QUERY_MY_RESTAURANT = gql`
 
 const SingleRestaurant = () => {
   const { id } = useParams<{ id: string }>()
+  const [ref, inView] = useInView({
+    threshold: 1
+  });
+
 
   const { data, loading, error } = useQuery<ownerSingleRestaurant, ownerSingleRestaurantVariables>(
     QUERY_MY_RESTAURANT, { variables: { input: { id: +id } } }
   )
+
+  useEffect(() => {
+    console.log(inView);
+  }, [inView])
   console.log(data, loading, error)
   return (
     <div className="bg-gray-100 max-h-full">
@@ -68,18 +103,23 @@ const SingleRestaurant = () => {
           </div>
         )}
         {!loading && data?.ownersSingleRestaurant?.restaurant && (
-          <div className=" flex flex-col relative top-0">
+          <div className="flex flex-col relative top-0">
             <motion.div
               initial={{ opacity: 0, x: -100 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.1 }}
               style={{ background: `url(${data?.ownersSingleRestaurant?.restaurant?.coverImage})`, objectFit: 'cover' }}
-              className="h-1/4 shadow-xl py-32" />
-            <motion.h2 initial={{ opacity: 0, x: -100 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.4 }} className="mt-10 bg-green-200 rounded-sm py-2 pl-4 text-xl italic">{data.ownersSingleRestaurant.restaurant.name}</motion.h2>
-            <motion.div className="flex w-full justify-around" initial={{ opacity: 0, x: -100 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.6 }}>
-
+              className="h-full shadow-xl py-32" />
+            <motion.h2
+              initial={{ opacity: 0, x: -100 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.4 }}
+              className="mt-10 bg-green-200 rounded-sm py-2 pl-4 text-xl italic">
+              {data.ownersSingleRestaurant.restaurant.name}
+            </motion.h2>
+            <motion.div className="flex w-full justify-between md:justify-around" initial={{ opacity: 0, x: -100 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.6 }}>
               <Link to={`/restaurant/${data?.ownersSingleRestaurant?.restaurant.id}/addMenuItem`}>
-                <button className="btn_base py-2 px-10 bg-blue-400 hover:bg-blue-600 mt-10 font-bold text-lg flex items-center justify-between transition-colors">
+                <button className="btn_base py-2 px-4 mx-2 h-16 bg-blue-400 hover:bg-blue-600 mt-10 font-bold text-lg flex items-center justify-between transition-colors">
                   <BiDish className="animate-pulse mr-4"
                     size={30}
                     color="white"
@@ -88,9 +128,9 @@ const SingleRestaurant = () => {
                 </button>
               </Link>
               <Link to="/buy-promotion">
-                <button className="btn_base py-2 bg-yellow-300 hover:bg-yellow-400 px-10 mt-10 font-bold text-lg text-black flex items-center justify-between transition-colors">
+                <button className="btn_base py-1 mt-10 h-16 sm:px-4 text-md bg-yellow-300 hover:bg-yellow-400 font-bold md:text-lg text-black flex items-center justify-between transition-colors">
                   <RiAdvertisementLine className="animate-pulse mr-4"
-                    size={30}
+                    size={60}
                   />
                   <span className="animate-pulse">Promote your restaurant</span>
                 </button>
@@ -102,30 +142,52 @@ const SingleRestaurant = () => {
               ) :
                 (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 1 }} className="my-10 bg-gray-200 rounded-md shadow-lg">
-                    <h2 className="text-center text-2xl italic pt-8 pb-5">Menu</h2>
+                    <h2 className="text-center text-2xl font-medium pt-8 pb-5">Menu</h2>
                     <div className="grid lg:grid-cols-3 md:grid-cols-2">
                       {data?.ownersSingleRestaurant?.restaurant?.menu.map((dish: ownerSingleRestaurant_ownersSingleRestaurant_restaurant_menu) => (
-                        <div className="mx-auto py-12 px-4 w-92 sm:px-6 lg:px-8" key={dish.id}>
-                          <div className="mx-auto">
-                            <div className="bg-white overflow-hidden shadow rounded-lg">
-                              <div className="border-b border-gray-200 px-4 py-5 h-24 sm:px-6 bg-emerald-600 text-white font-semibold">
-                                <h2 className="text-center text-lg">{dish.name}</h2>
-                              </div>
-                              <div className="px-4 py-5 sm:p-6">
-                                {dish?.photo && (
-                                  <img src={dish?.photo} className="border-2 border-dashed border-gray-300 rounded bg-white md:h-60 sm:h-80 w-full text-gray-200" aria-hidden="true" />
-                                )}
-                              </div>
-                              <div className="border-t border-gray-200 px-4 py-4 sm:px-6 h-32 flex items-center justify-center text-left">
-                                <h3>{dish.description}</h3>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                        <Dish dish={dish} />
                       )
                       )}
                     </div>
                   </motion.div>)}
+              <motion.div className="mt-12" ref={ref} animate={{ opacity: inView ? 1 : 0 }}>
+                <h2 className="text-center text-2xl font-medium">Sales</h2>
+                <div className="mx-20">
+                  <VictoryChart
+                    theme={VictoryTheme.material}
+                    domainPadding={30} width={window?.innerWidth - 200} height={400} containerComponent={<VictoryVoronoiContainer />}>
+                    <VictoryLine
+                      labels={({ datum }) => `$${parseInt(datum.y)}`}
+                      labelComponent={<VictoryTooltip renderInPortal style={{ fontSize: 20 }} dy={-20} />}
+                      animate={{
+                        duration: 2000,
+                        onLoad: { duration: 1000 }
+                      }}
+                      interpolation="natural"
+                      style={{
+                        data: {
+                          strokeWidth: 3
+                        }
+                      }}
+                      data={data?.ownersSingleRestaurant?.restaurant?.orders.map(
+                        order => ({
+                          x: order.createdAt,
+                          y: order.total
+                        }))}
+                    />
+                    <VictoryAxis
+                      style={{ tickLabels: { fontSize: 20, fill: "#2E8A25", fontWeight: 700 } }}
+                      tickFormat={(tick) => `$${tick}`}
+                      dependentAxis
+                    />
+                    <VictoryAxis
+                      style={{ tickLabels: { fontSize: 20, fill: "#1D761D", marginTop: 20, fontWeight: 700 } }}
+                      label={"date"}
+                      tickFormat={(tick) => new Date(tick).toLocaleDateString()}
+                    />
+                  </VictoryChart>
+                </div>
+              </motion.div>
             </div>
           </div>
         )
