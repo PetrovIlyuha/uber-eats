@@ -1,6 +1,6 @@
 import { useLazyQuery } from '@apollo/client'
 import gql from 'graphql-tag'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useHistory, useLocation } from 'react-router'
 import Restaurant from '../../components/restaurants/Restaurant'
@@ -37,13 +37,13 @@ const SearchPage: React.FC = () => {
   const [searchRestarant, { loading, data, called }] = useLazyQuery<searchRestaurant, searchRestaurantVariables>
     (SEARCH_RESTAURANT)
   useEffect(() => {
-    const [_, searchFor] = search?.split("=")
+    const searchFor  = search?.split("=")[1]
     if (!searchFor) {
       return history.replace('/')
     } else {
       searchRestarant({ variables: { input: { page: 1, query: searchFor } } })
     }
-  }, [history, search])
+  }, [history, search, searchRestarant])
 
   console.log(loading, data, called)
   return (
@@ -58,7 +58,7 @@ const SearchPage: React.FC = () => {
         <Container>
           <div className="mt-12 flex flex-col">
             <div className="mx-auto mb-5">
-              <img className="rounded-full h-12 w-14" src={data?.searchRestaurant?.results?.[0].category?.coverImage} alt="category promo image" />
+              <img className="rounded-full h-12 w-14" src={data?.searchRestaurant?.results?.[0].category?.coverImage} alt="category showing" />
             </div>
             <h2 className="text-bold">Found the <strong>"{data?.searchRestaurant?.results?.[0].name}"</strong> place for you</h2>
           <Restaurant
