@@ -72,12 +72,21 @@ const Restaurants = () => {
   }
   console.log(data)
   return (
-    <div className="bg-gray-100" h-full>
+    <div className="bg-gray-100 h-full">
       <Helmet>
         <title>Restaurants | Grabs Eaters</title>
       </Helmet>
-      <form onSubmit={handleSubmit(onSearchSubmit)} className="bg-gray-800 w-full py-28 flex items-center justify-center" style={{ backgroundImage: `url(${HeroBanner})`, backgroundSize: 'cover' }}>
-        <input name="search" ref={register({ required: true })} type="search" placeholder="Search for restaurant..." className="input py-2 w-3/4 md:w-4/12" />
+      <form onSubmit={handleSubmit(onSearchSubmit)}
+        className="bg-gray-800 w-full py-28 flex items-center justify-center"
+        style={{ backgroundImage: `url(${HeroBanner})`, backgroundSize: 'cover' }}
+      >
+        <input
+          name="search"
+          ref={register({ required: true })}
+          type="search"
+          placeholder="Search for restaurant..."
+          className="input py-2 w-3/4 md:w-4/12"
+        />
       </form>
       {!loading && data?.allCategories && (
         <Container>
