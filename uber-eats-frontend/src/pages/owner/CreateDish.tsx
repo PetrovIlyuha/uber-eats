@@ -204,7 +204,7 @@ const CreateDish = () => {
 							placeholder="Description"
 						/>
 						<div className="mt-3">
-							{errors.description && <FormError message="Description is a required field ant can't be shorter than 5 letters" />}
+							{errors.description && <FormError message="Description is a required field and can't be shorter than 5 letters" />}
 						</div>
 						<div className="mt-4 flex items-center flex-col-2">
 							{previewImage ? (
