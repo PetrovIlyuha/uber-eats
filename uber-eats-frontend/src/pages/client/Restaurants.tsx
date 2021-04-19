@@ -1,31 +1,34 @@
-import { useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
-import React, { useState } from 'react'
-import { Helmet } from 'react-helmet-async'
-import { useForm } from 'react-hook-form'
-import { useHistory } from 'react-router'
-import { Link } from 'react-router-dom'
-import CategoriesIconsBar from '../../components/categories/CategoriesIconsBar'
-import Restaurant from '../../components/restaurants/Restaurant'
-import Container from '../../components/reusable/Container'
-import RestaurantsPaginator from '../../components/reusable/RestaurantsPaginator'
-import HeroBanner from '../../images/hero_banner-min.jpg'
-import { restaurantsPageQuery, restaurantsPageQueryVariables } from '../../__api_schema_typed__/restaurantsPageQuery'
+import { useQuery } from "@apollo/client";
+import gql from "graphql-tag";
+import React, { useState } from "react";
+import { Helmet } from "react-helmet-async";
+import { useForm } from "react-hook-form";
+import { useHistory } from "react-router";
+import { Link } from "react-router-dom";
+import CategoriesIconsBar from "../../components/categories/CategoriesIconsBar";
+import Restaurant from "../../components/restaurants/Restaurant";
+import Container from "../../components/reusable/Container";
+import RestaurantsPaginator from "../../components/reusable/RestaurantsPaginator";
+import HeroBanner from "../../images/hero_banner-min.jpg";
+import {
+  restaurantsPageQuery,
+  restaurantsPageQueryVariables,
+} from "../../__api_schema_typed__/restaurantsPageQuery";
 
 const RESTAURANTS_QUERY = gql`
   query restaurantsPageQuery($input: RestaurantsInput!) {
     allCategories {
-        ok
-        error
-        categories {
-          id
-          name
-          coverImage
-          slug
-          restaurantCount
-        }
+      ok
+      error
+      categories {
+        id
+        name
+        coverImage
+        slug
+        restaurantCount
+      }
     }
-    restaurants (input: $input) {
+    restaurants(input: $input) {
       ok
       error
       totalPages
@@ -45,40 +48,44 @@ const RESTAURANTS_QUERY = gql`
   }
 `;
 
-
 const Restaurants = () => {
-  const [page, setPage] = useState(1)
-  const history = useHistory()
-  const { register, handleSubmit, getValues } = useForm()
-  const { data, loading } = useQuery<restaurantsPageQuery, restaurantsPageQueryVariables>(
-    RESTAURANTS_QUERY,
-    {
-      variables: { input: { page } }
-    })
+  const [page, setPage] = useState(1);
+  const history = useHistory();
+  const { register, handleSubmit, getValues } = useForm();
+  const { data, loading } = useQuery<
+    restaurantsPageQuery,
+    restaurantsPageQueryVariables
+  >(RESTAURANTS_QUERY, {
+    variables: { input: { page } },
+  });
 
   const changeToNextPage = () => {
-    setPage(page => page + 1)
-  }
+    setPage((page) => page + 1);
+  };
   const changeToPrevPage = () => {
-    setPage(page => page - 1)
-  }
+    setPage((page) => page - 1);
+  };
 
   const onSearchSubmit = () => {
-    const { search } = getValues()
+    const { search } = getValues();
     history.push({
-      pathname: '/search',
-      search: `?term=${search}`
-    })
-  }
-  console.log(data)
+      pathname: "/search",
+      search: `?term=${search}`,
+    });
+  };
+  console.log(data);
   return (
-    <div className="bg-gray-100 h-full">
+    <div className="bg-gray-100 h-full pb-96">
       <Helmet>
         <title>Restaurants | Grabs Eaters</title>
       </Helmet>
-      <form onSubmit={handleSubmit(onSearchSubmit)}
+      <form
+        onSubmit={handleSubmit(onSearchSubmit)}
         className="bg-gray-800 w-full py-28 flex items-center justify-center"
-        style={{ backgroundImage: `url(${HeroBanner})`, backgroundSize: 'cover' }}
+        style={{
+          backgroundImage: `url(${HeroBanner})`,
+          backgroundSize: "cover",
+        }}
       >
         <input
           name="search"
@@ -98,7 +105,7 @@ const Restaurants = () => {
             changeToPrevPage={changeToPrevPage}
           />
           <div className="mt-10 grid lg:grid-cols-3 md:grid-cols-2 gap-x-5 gap-y-10">
-            {data?.restaurants?.results?.map(restaurant => (
+            {data?.restaurants?.results?.map((restaurant) => (
               <Link to={`/restaurant/${restaurant.id}`} key={restaurant.id}>
                 <Restaurant
                   key={restaurant.id}
@@ -118,7 +125,7 @@ const Restaurants = () => {
         </Container>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Restaurants
+export default Restaurants;
