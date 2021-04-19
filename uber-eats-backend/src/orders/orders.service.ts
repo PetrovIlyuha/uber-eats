@@ -97,6 +97,7 @@ export class OrdersService {
       });
       return {
         ok: true,
+        orderId: order.id,
         error: null,
       };
     } catch (error) {
@@ -176,8 +177,7 @@ export class OrdersService {
           error: `You are restrictred from viewing the order details!`,
         };
       }
-
-      // console.log('order', order);
+      console.log('order', order);
       return { ok: true, order };
     } catch (error) {
       return {

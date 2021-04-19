@@ -22,4 +22,7 @@ export class CreateOrderInput {
 }
 
 @ObjectType()
-export class CreateOrderOutput extends BasicResponse {}
+export class CreateOrderOutput extends BasicResponse {
+  @Field((type) => Int, { nullable: true })
+  orderId?: number;
+}

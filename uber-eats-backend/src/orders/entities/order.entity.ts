@@ -41,13 +41,13 @@ export class Order extends CoreEntity {
   })
   customer: User;
 
-  @Field((_) => User)
+  @Field((_) => User, { nullable: true })
   @ManyToOne((type) => User, (user) => user.deliveries, {
     onDelete: 'SET NULL',
     nullable: true,
     eager: true,
   })
-  driver: User;
+  driver?: User;
 
   @Field((_) => Restaurant, { nullable: true })
   @ManyToOne((type) => Restaurant, (restaurant) => restaurant.orders, {
