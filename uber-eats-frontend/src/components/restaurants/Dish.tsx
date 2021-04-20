@@ -162,6 +162,7 @@ const Dish: React.FC<DishProps> = ({
         {dish?.photo && (
           <img
             src={dish?.photo}
+            alt="dish picture"
             className="border-2 border-dashed p-2 border-gray-300 rounded bg-white w-6/12 sm:h-32 sm:w-36 text-gray-200"
             aria-hidden="true"
           />
