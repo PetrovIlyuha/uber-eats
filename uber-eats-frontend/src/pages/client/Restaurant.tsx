@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import gql from "graphql-tag";
 import { useMutation, useQuery } from "@apollo/client";
 import { useHistory, useParams } from "react-router";
@@ -91,7 +91,7 @@ const Restaurant = () => {
   const orderCreationCompleted = (data: createOrder) => {
     if (data.createOrder.ok) {
       const {
-        createOrder: { ok, error, orderId },
+        createOrder: { orderId },
       } = data;
       cogoToast.success("Order was created! 🍔🍕🍝");
       cancelOrClearOnCompleteOrder();
@@ -190,7 +190,6 @@ const Restaurant = () => {
       restaurantId: data?.restaurant?.restaurant.id,
       items: orderItems,
     };
-    console.log(order);
     makingOrder({ variables: { input: order } });
   };
 
