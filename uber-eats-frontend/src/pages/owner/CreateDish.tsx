@@ -77,6 +77,7 @@ const CreateDish = () => {
   const [previewImage, setPreviewImage] = useState<string | ArrayBuffer | null>(
     null
   );
+  const imageChangeWatcher = watch("image");
   useEffect(() => {
     const { image } = getValues();
     if (image?.[0]) {
@@ -88,7 +89,7 @@ const CreateDish = () => {
       };
       reader.readAsDataURL(image[0]);
     }
-  }, [watch("image"), getValues]);
+  }, [imageChangeWatcher, getValues]);
 
   function onCompleted(data: createDish) {
     const {
