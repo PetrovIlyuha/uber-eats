@@ -18,6 +18,8 @@ import { ScrollToTopControlller } from "../hooks/scrollTopHook";
 import SingleRestaurant from "../pages/owner/SingleRestaurant";
 import CreateDish from "../pages/owner/CreateDish";
 import Order from "../pages/Order";
+import DashBoard from "../pages/driver/DashBoard";
+import { UserRole } from "../__api_schema_typed__/globalTypes";
 
 export const LoggedInRouter = () => {
   // const logOut = () => {
@@ -41,6 +43,8 @@ export const LoggedInRouter = () => {
     },
     { path: "/restaurant/:id", page: SingleRestaurant, exact: false },
   ];
+
+  const driverRoutes = [{ path: "/", page: DashBoard, exact: true }];
 
   const commonRoutes = [
     { path: "/edit-profile", page: EditProfile, exact: false },
@@ -66,7 +70,7 @@ export const LoggedInRouter = () => {
       <Header />
       <ScrollToTopControlller />
       <Switch>
-        {data.me.role === "Client" &&
+        {data.me.role === UserRole.Client &&
           [...clientRoutes, ...commonRoutes].map((route) => (
             <Route
               key={route.path}
@@ -75,8 +79,17 @@ export const LoggedInRouter = () => {
               exact={route.exact}
             />
           ))}
-        {data.me.role === "Owner" &&
+        {data.me.role === UserRole.Owner &&
           [...ownerRoutes, ...commonRoutes].map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              component={route.page}
+              exact={route.exact}
+            />
+          ))}
+        {data.me.role === UserRole.Delivery &&
+          [...driverRoutes, ...commonRoutes].map((route) => (
             <Route
               key={route.path}
               path={route.path}
